@@ -1,1 +1,0 @@
-<?php require __DIR__.'/app.php';render_header('Đã thêm vào giỏ');?><section class="page-heading"><h1>Đã thêm sản phẩm vào giỏ hàng</h1><a href="index.php?page=giohang">Xem giỏ hàng</a></section><?php render_footer();?>

@@ -1,1 +1,0 @@
-<?php require __DIR__.'/app.php';render_header('Cập nhật giỏ hàng');?><section class="page-heading"><h1>Giỏ hàng đã cập nhật</h1><a href="index.php?page=giohang">Quay lại giỏ hàng</a></section><?php render_footer();?>

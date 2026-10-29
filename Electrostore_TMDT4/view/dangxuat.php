@@ -1,1 +1,0 @@
-<?php require __DIR__.'/app.php';render_header('Đăng xuất');?><section class="page-heading"><h1>Bạn đã đăng xuất</h1><a href="index.php">Về trang chủ</a></section><?php render_footer();?>
