@@ -1,2 +1,0 @@
-# quandeptrai
-web dtu
