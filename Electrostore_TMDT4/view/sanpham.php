@@ -1,0 +1,27 @@
+<?php
+$viewData = get_defined_vars();
+$filter = is_array($viewData['filter'] ?? null) ? $viewData['filter'] : [];
+$category = is_array($viewData['category'] ?? null) ? $viewData['category'] : null;
+$categories = is_array($viewData['categories'] ?? null) ? $viewData['categories'] : [];
+$showHighlights = (bool)($viewData['showHighlights'] ?? false);
+$featuredProducts = is_array($viewData['featuredProducts'] ?? null) ? $viewData['featuredProducts'] : [];
+$featuredProductCount = (int)($viewData['featuredProductCount'] ?? 0);
+$saleProducts = is_array($viewData['saleProducts'] ?? null) ? $viewData['saleProducts'] : [];
+$saleProductCount = (int)($viewData['saleProductCount'] ?? 0);
+$totalProducts = (int)($viewData['totalProducts'] ?? 0);
+$products = is_array($viewData['products'] ?? null) ? $viewData['products'] : [];
+$productPages = max(1, (int)($viewData['productPages'] ?? 1));
+$productPage = max(1, (int)($viewData['productPage'] ?? 1));
+unset($viewData);
+require __DIR__.'/app.php';render_header('Sản phẩm','sanpham');$currentSort=(string)($filter['sort']??'featured');$isSale=!empty($filter['sale']);$selectedCategory=(int)($category['id']??0);$selectedBrand=trim((string)($filter['brand']??''));$baseQuery=$_GET;unset($baseQuery['page_no']);?>
+<section class="page-heading product-heading"><h1><?=!empty($category)?'Sản phẩm '.e($category['name']):($selectedBrand!==''?'Sản phẩm thương hiệu '.e($selectedBrand):($isSale?'Sản phẩm đang giảm giá':'Tất cả sản phẩm'))?></h1></section>
+<div class="product-catalog-layout<?=($showHighlights && !empty($featuredProducts)) ? ' has-featured-products' : ''?>"><aside class="product-filter-sidebar"><form class="product-filter-form" method="get"><input type="hidden" name="page" value="sanpham"><?php if($selectedBrand!==''):?><input type="hidden" name="brand" value="<?=e($selectedBrand)?>"><?php endif;?><?php if($selectedCategory):?><input type="hidden" name="cat" value="<?=e($category['slug'])?>"><?php endif;?>
+<h2>Bộ lọc sản phẩm</h2><label class="filter-search"><span>Tìm sản phẩm</span><input type="search" name="q" value="<?=e($filter['q']??'')?>" placeholder="Tên hoặc thương hiệu"></label><label class="filter-sort"><span>Sắp xếp theo</span><select name="sort"><option value="featured" <?=$currentSort==='featured'?'selected':''?>>Nổi bật</option><option value="price_asc" <?=$currentSort==='price_asc'?'selected':''?>>Giá thấp đến cao</option><option value="price_desc" <?=$currentSort==='price_desc'?'selected':''?>>Giá cao đến thấp</option><option value="newest" <?=$currentSort==='newest'?'selected':''?>>Mới cập nhật</option></select></label><label class="sale-filter"><input type="checkbox" name="sale" value="1" <?=$isSale?'checked':''?>> Chỉ xem sản phẩm giảm giá</label><button class="button button-dark filter-submit">Lọc sản phẩm</button></form>
+<nav class="product-category-filter" aria-label="Lọc theo danh mục"><h3>Danh mục</h3><a class="<?=$selectedCategory===0?'selected':''?>" href="index.php?page=sanpham<?php if($selectedBrand!==''):?>&amp;brand=<?=rawurlencode($selectedBrand)?><?php endif;?>">Tất cả sản phẩm</a><?php foreach($categories as $cat):?><a class="<?=$selectedCategory===(int)$cat['id']?'selected':''?>" href="index.php?page=sanpham&amp;cat=<?=rawurlencode($cat['slug'])?><?php if($selectedBrand!==''):?>&amp;brand=<?=rawurlencode($selectedBrand)?><?php endif;?>"><?=e($cat['name'])?></a><?php endforeach;?></nav></aside>
+<section class="product-catalog-content">
+<?php if($showHighlights&&$featuredProducts):?><section class="product-highlight-section"><div class="section-heading"><div><span class="eyebrow">ĐƯỢC CỬA HÀNG LỰA CHỌN</span><h2>Sản phẩm nổi bật</h2></div></div><div class="product-grid product-highlight-grid"><?php foreach($featuredProducts as $featuredProduct)product_card($featuredProduct);?></div></section><?php endif;?>
+<?php if($showHighlights&&$saleProducts):?><section class="product-highlight-section sale-highlight-section"><div class="section-heading"><div><span class="eyebrow">ƯU ĐÃI ĐANG ÁP DỤNG</span><h2>Sản phẩm khuyến mãi</h2></div></div><div class="product-grid product-highlight-grid"><?php foreach($saleProducts as $saleProduct)product_card($saleProduct);?></div></section><?php endif;?>
+<?php if($selectedCategory||$selectedBrand!==''||$isSale||!empty($filter['q'])||$currentSort!=='featured'):?><div class="product-results"><a href="index.php?page=sanpham">Xóa bộ lọc</a></div><?php endif;?><?php if(!$products):?><div class="empty-state">Chưa tìm thấy sản phẩm phù hợp. Hãy thử từ khóa hoặc bộ lọc khác.</div><?php else:?><div class="product-grid"><?php foreach($products as $p)product_card($p);?></div><?php if($productPages>1):?><nav class="store-pagination" aria-label="Phân trang sản phẩm"><?php if($productPage>1):$pageQuery=$baseQuery;$pageQuery['page_no']=$productPage-1;?><a href="index.php?<?=e(http_build_query($pageQuery))?>" aria-label="Trang trước">‹</a><?php endif;?><?php for($pageNumber=1;$pageNumber<=$productPages;$pageNumber++):$pageQuery=$baseQuery;$pageQuery['page_no']=$pageNumber;?><a class="<?=$pageNumber===$productPage?'current':''?>" href="index.php?<?=e(http_build_query($pageQuery))?>" <?=$pageNumber===$productPage?'aria-current="page"':''?>><?=$pageNumber?></a><?php endfor;?><?php if($productPage<$productPages):$pageQuery=$baseQuery;$pageQuery['page_no']=$productPage+1;?><a href="index.php?<?=e(http_build_query($pageQuery))?>" aria-label="Trang sau">›</a><?php endif;?></nav><?php endif;?><?php endif;?></section></div><?php render_footer();?>
+
+
+
